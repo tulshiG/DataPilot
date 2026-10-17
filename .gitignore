@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+*.env.local
+
+# Logs & Debug
+*.log
+debug_*.py
+debug_*.txt
+trace_*.json
+*_out.txt
+*_utf8.txt
+
+# Data
+*.sqlite3
+backend/data/vector_indexes/*.bin
+backend/app/uploads/*
+!backend/app/uploads/.gitkeep
