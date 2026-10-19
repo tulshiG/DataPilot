@@ -1,4 +1,6 @@
+# =========================
 # Python
+# =========================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -10,27 +12,38 @@ build/
 .venv/
 venv/
 env/
-
-# Node
-node_modules/
-frontend/dist/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Environment
 .env
 *.env.local
 
-# Logs & Debug
+# =========================
+# Node.js & Frontend
+# =========================
+node_modules/
+frontend/dist/
+frontend/build/
+.npm/
+.eslintcache
+
+# =========================
+# Vector Databases & Local Data
+# (Crucial for staying under Render's size limit)
+# =========================
+backend/data/vector_indexes/
+*.bin
+*.sqlite3
+*.db
+
+# =========================
+# Uploads & User Generated Files
+# =========================
+backend/app/uploads/*
+!backend/app/uploads/.gitkeep
+backend/app/static/reports/*
+!backend/app/static/reports/.gitkeep
+
+# =========================
+# Logs & Debugging Files
+# =========================
 *.log
 debug_*.py
 debug_*.txt
@@ -38,8 +51,18 @@ trace_*.json
 *_out.txt
 *_utf8.txt
 
-# Data
-*.sqlite3
-backend/data/vector_indexes/*.bin
-backend/app/uploads/*
-!backend/app/uploads/.gitkeep
+# =========================
+# IDEs & Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# =========================
+# Operating System Files
+# =========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
