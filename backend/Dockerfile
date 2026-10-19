@@ -18,4 +18,5 @@ RUN mkdir -p app/uploads app/static/reports
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Render sets $PORT dynamically; fall back to 8000 for local dev
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
