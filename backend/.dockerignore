@@ -1,14 +1,9 @@
-# .dockerignore
 .git
-.gitignore
 venv/
 .venv/
-env/
 node_modules/
-frontend/dist/
 backend/data/vector_indexes/
 backend/app/uploads/
 *.sqlite3
 __pycache__/
-*.pyc
 .env
