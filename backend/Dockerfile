@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN python -c "import bcrypt, passlib; print('INSTALLED BCRYPT:', bcrypt.__version__); print('INSTALLED PASSLIB:', passlib.__version__)"
 
 COPY . .
 
