@@ -1,68 +1,82 @@
+
+import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
 from app.core.logger import get_logger
 from app.core.config import settings
 from app.database.connection import engine
 from app.database.base import Base
-import os
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from app.core.rate_limit import limiter   # single source of truth
+from app.core.rate_limit import limiter
 
 app = FastAPI(title=settings.PROJECT_NAME)
 logger = get_logger("main")
 
-# Attach shared rate-limiter to the app
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(
+    RateLimitExceeded,
+    _rate_limit_exceeded_handler,
+)
 
+# Read allowed frontend origins from Render environment variables.
 allowed_origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174",
-    "http://127.0.0.1:5174",
-    os.getenv("FRONTEND_URL", ""),
+    origin.strip().rstrip("/")
+    for origin in os.getenv(
+        "FRONTEND_URL",
+        "https://data-pilot-kappa.vercel.app",
+    ).split(",")
+    if origin.strip()
 ]
+
+# Include known production and preview origins.
+for origin in [
+    "https://data-pilot-kappa.vercel.app",
+]:
+    if origin not in allowed_origins:
+        allowed_origins.append(origin)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[origin for origin in allowed_origins if origin],
+    allow_origins=allowed_origins,
+    allow_origin_regex=(
+        r"https://data-pilot-[a-z0-9-]+-gtuls-projects\.vercel\.app"
+    ),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
-
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled error on {request.url.path}: {str(exc)}", exc_info=True)
-    origin = request.headers.get("origin", "")
-    headers = {}
-    if origin in allowed_origins:
-        headers["Access-Control-Allow-Origin"] = origin
-        headers["Access-Control-Allow-Credentials"] = "true"
+async def global_exception_handler(
+    request: Request,
+    exc: Exception,
+):
+    logger.error(
+        f"Unhandled error on {request.url.path}: {str(exc)}",
+        exc_info=True,
+    )
     return JSONResponse(
         status_code=500,
-        content={"detail": str(exc)},
-        headers=headers,
+        content={"detail": "Internal server error"},
     )
-
 
 @app.get("/")
 def root():
     return {"message": "DataPilot AI backend is running"}
 
-
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
 
-
-# ---- Routers (imported AFTER app is created to avoid circular imports) ----
-from app.api import auth, workspace, upload, etl, relationship, knowledge_base, query, dashboard, reports, settings as settings_router, ai, ml  # noqa: E402
+# Keep your existing router imports and registrations below.
+from app.api import (
+    auth, workspace, upload, etl, relationship,
+    knowledge_base, query, dashboard, reports,
+    settings as settings_router, ai, ml,
+)
 
 app.include_router(auth.router)
 app.include_router(workspace.router)
