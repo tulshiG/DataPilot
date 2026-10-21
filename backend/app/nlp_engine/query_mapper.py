@@ -939,7 +939,7 @@ def map_to_query_spec(
  
         all_datasets = db.query(Dataset).filter(Dataset.workspace_id == workspace_id).all()
         table_to_ds: dict[str, Dataset] = {d.cleaned_table_name: d for d in all_datasets}
-        joined_tables: set[str] = {spec["primary_table"]} | {j["table"] for j in spec["joins"]
+        joined_tables: set[str] = ({spec["primary_table"]} | {j["table"] for j in spec["joins"]})
                                                              
         for (filter_table, filter_col), values in col_value_map.items():
             if filter_table == spec["primary_table"] or filter_table in joined_tables:
