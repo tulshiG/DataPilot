@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, text
 import logging
-
+import re
 from app.llm_engine.fallback import parse_query_with_fallback
 from app.nlp_engine.pipeline import NLPQueryPipeline
 from app.services.history_service import log_query
