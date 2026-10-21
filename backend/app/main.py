@@ -28,14 +28,16 @@ app.add_exception_handler(
 # CORS configuration
 allowed_origins = [
     "https://data-pilot-kappa.vercel.app",
-    os.getenv("FRONTEND_URL", ""),
 ]
+
+frontend_url = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
+
+if frontend_url and frontend_url not in allowed_origins:
+    allowed_origins.append(frontend_url)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        origin for origin in allowed_origins if origin
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
