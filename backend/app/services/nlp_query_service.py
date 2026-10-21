@@ -12,12 +12,20 @@ logger = logging.getLogger(__name__)
 
 
 def _execute_sql(sql: str, params: dict) -> tuple[list[str], list[dict]]:
+    # Convert psycopg2-style named placeholders to SQLAlchemy text() syntax.
+    # Example: %(filter_0)s -> :filter_0
+    sql = re.sub(
+        r"%\(([A-Za-z_][A-Za-z0-9_]*)\)s",
+        r":\1",
+        sql,
+    )
+
     engine = create_engine(settings.DATABASE_URL)
     try:
         with engine.connect() as conn:
             result = conn.execute(text(sql), params)
             columns = list(result.keys())
-            rows = [dict(zip(columns, row)) for row in result.fetchall()]
+            rows = [dict(row) for row in result.mappings().all()]
             return columns, rows
     finally:
         engine.dispose()
