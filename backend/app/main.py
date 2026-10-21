@@ -14,6 +14,7 @@ from app.database.base import Base
 
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from app.metadata.models import ColumnMetadata, TableMetadata
 
 app = FastAPI(title=settings.PROJECT_NAME)
 logger = get_logger("main")
@@ -118,16 +119,28 @@ from app.models.query_history import QueryHistory  # noqa: E402
 
 
 @app.on_event("startup")
-def initialize_query_history_table():
-    """Create query_history if it does not exist."""
+def initialize_database_tables():
+    """Ensure required application tables exist."""
     try:
+        # Existing table initialization
         QueryHistory.__table__.create(
             bind=engine,
             checkfirst=True,
         )
-        logger.info("query_history table verified.")
-    except Exception:
-        logger.exception(
-            "Failed to initialize query_history table."
+
+        # Metadata tables used by the ML recommendation engine
+        TableMetadata.__table__.create(
+            bind=engine,
+            checkfirst=True,
         )
+
+        ColumnMetadata.__table__.create(
+            bind=engine,
+            checkfirst=True,
+        )
+
+        logger.info("Required database tables verified.")
+
+    except Exception:
+        logger.exception("Failed to initialize database tables.")
         raise
