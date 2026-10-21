@@ -1,32 +1,4 @@
-# from pydantic import BaseModel
-# from typing import Any
-# from datetime import datetime
 
-# class QueryRequest(BaseModel):
-#     query: str
-
-# class QueryResult(BaseModel):
-#     raw_query: str
-#     intent: str
-#     matched_rule: str | None
-#     generated_sql: str | None
-#     columns: list[str]
-#     rows: list[dict[str, Any]]
-#     row_count: int
-#     summary: str
-
-# class QueryHistoryOut(BaseModel):
-#     id: int
-#     raw_query: str
-#     detected_intent: str | None
-#     generated_sql: str | None
-#     status: str
-#     error_message: str | None
-#     result_row_count: int | None
-#     created_at: datetime
-
-#     class Config:
-#         from_attributes = True
 from pydantic import BaseModel
 from typing import Any, Optional
 from datetime import datetime
@@ -35,18 +7,6 @@ class QueryRequest(BaseModel):
     query: str
     dataset_id: int | None = None
 
-# class QueryResult(BaseModel):
-#     raw_query: str
-#     intent: str
-#     matched_rule: str | None
-#     generated_sql: str | None
-#     columns: list[str]
-#     rows: list[dict[str, Any]]
-#     row_count: int
-#     summary: str
-#     # Optional rich payloads for special intents
-#     dashboard: Optional[dict[str, Any]] = None
-#     insights: Optional[dict[str, Any]] = None
 class QueryResult(BaseModel):
     raw_query: str
     intent: str
